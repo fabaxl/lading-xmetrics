@@ -321,3 +321,18 @@ test("mobile navigation and primary demo action remain available", () => {
   assert.match(html, /class="menu-toggle"/);
   assert.match(html, /Explorar demo/);
 });
+
+test("typography keeps compact labels at least 13px at every breakpoint", () => {
+  const css = fs.readFileSync(
+    path.join(root, "static/css/landing.css"),
+    "utf8",
+  );
+  const sizes = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/g)].map(
+    (match) => Number(match[1]),
+  );
+  assert.ok(sizes.length > 0);
+  assert.ok(
+    sizes.every((size) => size >= 13),
+    `Found undersized labels: ${sizes.filter((size) => size < 13)}`,
+  );
+});
