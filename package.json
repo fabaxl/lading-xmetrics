@@ -1,0 +1,11 @@
+{
+  "name": "lading-xmetrics",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing personal de xMetrics: NPS, BI, contactabilidad responsable y visión IA.",
+  "scripts": {
+    "dev": "python3 -m http.server 8765 --bind 127.0.0.1",
+    "test": "node --test tests/*.test.cjs",
+    "check": "node --check static/js/landing.js && node --check static/js/landing-orbit.js"
+  }
+}
