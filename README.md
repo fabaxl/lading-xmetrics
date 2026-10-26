@@ -17,8 +17,14 @@ Abre http://127.0.0.1:8765. Requiere Python 3; no necesita instalación de paque
 - Simulador NPS, filtros BI y recorrido interactivo.
 - Contactabilidad responsable: límites por invitación, intervalos y cierre al responder.
 - Diseño adaptable a móviles, teclado y `prefers-reduced-motion`.
+- Metodología de captura, segmentación y acción, dimensiones de experiencia y OIRS institucional.
+- Enlaces al contacto oficial y a los correos de demostraciones y ventas.
 
 **Todo dato es ilustrativo.** La IA está en exploración: las respuestas son predefinidas, no hay inferencia ni análisis real. No se envían mensajes ni se recogen datos de pacientes. El control antispam no garantiza entrega ni reemplaza la gestión de consentimiento.
+
+## Fuente institucional
+
+El contenido se complementó con [xmetrics.cl](https://www.xmetrics.cl/) (consulta: 26 de octubre de 2026). Se adaptó su enfoque sin reproducir porcentajes promocionales como resultados verificados. La OIRS se presenta como alcance institucional sujeto a demostración; esta landing no recibe ni gestiona solicitudes. Los enlaces de correo abren el cliente del visitante y no envían mensajes por sí solos. La IA conceptual y los controles de contactabilidad se mantienen separados de las afirmaciones de esa fuente.
 
 ## Archivos
 

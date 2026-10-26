@@ -336,3 +336,44 @@ test("typography keeps compact labels at least 13px at every breakpoint", () => 
     `Found undersized labels: ${sizes.filter((size) => size < 13)}`,
   );
 });
+
+test("institutional methodology and OIRS clearly distinguish the static demo", () => {
+  assert.ok(byId.has("metodologia"));
+  assert.ok(byId.has("experiencia"));
+  assert.match(visibleText, /Captura\. Segmenta\. Actúa\./);
+  assert.match(visibleText, /OIRS virtual/);
+  for (const topic of [
+    "Reclamos",
+    "Felicitaciones",
+    "Sugerencias",
+    "Tiempo de espera",
+    "Atención humanizada",
+  ]) {
+    assert.ok(
+      visibleText.includes(topic),
+      `Missing institutional topic: ${topic}`,
+    );
+  }
+  assert.match(visibleText, /enfoque institucional de xMetrics/);
+  assert.match(visibleText, /esta landing no recibe solicitudes/);
+  assert.equal(tags.filter((tag) => tag.name === "form").length, 0);
+});
+
+test("official demonstration, source and email contacts have explicit destinations", () => {
+  const links = tags.filter((tag) => tag.name === "a");
+  for (const destination of [
+    "https://www.xmetrics.cl/",
+    "https://www.xmetrics.cl/#contact",
+    "mailto:demo@xmetrics.cl",
+    "mailto:ventas@xmetrics.cl",
+  ]) {
+    assert.ok(
+      links.some((tag) => tag.attrs.href === destination),
+      `Missing link: ${destination}`,
+    );
+  }
+  for (const tag of links.filter((tag) => tag.attrs.target === "_blank")) {
+    const rel = (tag.attrs.rel || "").split(/\s+/);
+    assert.ok(rel.includes("noopener") && rel.includes("noreferrer"));
+  }
+});
