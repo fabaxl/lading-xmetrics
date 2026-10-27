@@ -28,17 +28,18 @@ function request(body = valid, options = {}) {
   }) });
 }
 
-async function harness({ verification, delivery, timeoutMs = 100, fetchImpl } = {}) {
+async function harness({ verification, delivery, timeoutMs = 100, fetchImpl, logger } = {}) {
   const { createContactHandler } = await modulePromise;
   const calls = [];
+  const logs = [];
   const mockFetch = async (url, options) => {
     calls.push({ url, options });
     const implementation = fetchImpl || (url.includes("siteverify") ? verification : delivery);
     if (implementation) return implementation(url, options);
     return upstream(url.includes("siteverify") ? verified : { messageId: "<accepted-by-provider>" }, 201);
   };
-  const handler = createContactHandler({ fetchImpl: mockFetch, timeoutMs });
-  return { calls, run: (input = request(), environment = env) => handler({ request: input, env: environment }) };
+  const handler = createContactHandler({ fetchImpl: mockFetch, timeoutMs, logger: logger || ((entry) => logs.push(entry)) });
+  return { calls, logs, run: (input = request(), environment = env) => handler({ request: input, env: environment }) };
 }
 
 async function expectError(response, code, status) {
@@ -169,7 +170,7 @@ test("success uses server-only credentials, fixed addresses, validated reply-to,
   assert.equal(verification.options.body.get("remoteip"), "192.0.2.1");
   assert.equal(delivery.url, "https://api.brevo.com/v3/smtp/email");
   assert.equal(delivery.options.headers["api-key"], env.BREVO_API_KEY);
-  assert.equal(delivery.options.redirect, "error");
+  assert.equal(delivery.options.redirect, "manual");
   const sent = JSON.parse(delivery.options.body);
   assert.deepEqual(sent.sender, { email: "contacto@xmetrics.cl", name: "xMetrics" });
   assert.deepEqual(sent.to, [{ email: "ventas@xmetrics.cl", name: "Ventas xMetrics" }]);
@@ -226,4 +227,78 @@ test("network/timeout after send is uncertain, aborts and never retries", async 
     await expectError(await h.run(), "delivery_uncertain", 504);
     assert.equal(h.calls.length, 2);
   }
+});
+
+
+test("both upstreams use Workers-supported manual redirect mode and never follow a 302", async () => {
+  for (const provider of ["verification", "delivery"]) {
+    const h = await harness({ [provider]: () => new Response(JSON.stringify({ ...verified, messageId: "not-accepted" }), {
+      status: 302, headers: { Location: "https://untrusted-redirect.example" },
+    }) });
+    await expectError(await h.run(), provider === "verification" ? "verification_failed" : "delivery_failed",
+      provider === "verification" ? 400 : 502);
+    assert.equal(h.calls.length, provider === "verification" ? 1 : 2);
+    assert.deepEqual(h.logs, provider === "verification"
+      ? [{ event: "contact_turnstile_rejected", reason: "upstream_rejected" }] : []);
+    for (const call of h.calls) {
+      assert.equal(call.options.redirect, "manual");
+      assert.notEqual(call.url, "https://untrusted-redirect.example");
+    }
+  }
+});
+
+test("CAPTCHA diagnostics classify all guards and only include allowlisted provider codes", async () => {
+  const cases = [
+    [() => upstream(verified, 503), { reason: "upstream_rejected" }],
+    [() => upstream({ success: false, "error-codes": ["invalid-input-secret", "timeout-or-duplicate",
+      "invalid-input-secret", "private-provider-data", { secret: env.TURNSTILE_SECRET_KEY }] }),
+      { reason: "challenge_rejected", codes: ["invalid-input-secret", "timeout-or-duplicate"] }],
+    [() => upstream({ success: "true", "error-codes": env.TURNSTILE_SECRET_KEY }), { reason: "challenge_rejected", codes: [] }],
+    [() => new Response("malformed-json"), { reason: "challenge_rejected", codes: [] }],
+    [() => upstream({ ...verified, hostname: "private-host.example" }), { reason: "hostname_mismatch" }],
+    [() => upstream({ ...verified, action: "private-action" }), { reason: "action_mismatch" }],
+    [() => { throw new TypeError("private exception message"); }, { reason: "upstream_exception", exceptionName: "TypeError" }],
+    [() => { throw Object.assign(new Error("private exception message"), { name: "private-exception-name" }); },
+      { reason: "upstream_exception", exceptionName: "UnknownError" }],
+    [aborting, { reason: "upstream_exception", exceptionName: "TimeoutError" }],
+  ];
+  for (const [verification, expected] of cases) {
+    const h = await harness({ verification, timeoutMs: 10 });
+    await expectError(await h.run(), "verification_failed", 400);
+    assert.deepEqual(h.logs, [{ event: "contact_turnstile_rejected", ...expected }]);
+    assert.equal(h.calls.length, 1);
+  }
+});
+
+test("CAPTCHA diagnostics do not leak contact, tokens, secrets, IP, hostname, bodies or exception text", async () => {
+  const sensitive = [env.TURNSTILE_SECRET_KEY, env.BREVO_API_KEY, valid.turnstileToken,
+    valid.name, valid.email, valid.organization, valid.message, "192.0.2.55", "private-host.example", "private-action"];
+  const malicious = sensitive.join(" | ");
+  for (const verification of [
+    () => upstream({ success: false, "error-codes": [malicious, "bad-request"], body: malicious }),
+    () => upstream({ ...verified, hostname: "private-host.example", body: malicious }),
+    () => upstream({ ...verified, action: "private-action", body: malicious }),
+    () => { throw new TypeError(malicious); },
+    () => { throw { name: malicious, message: malicious, stack: malicious, cause: malicious }; },
+  ]) {
+    const h = await harness({ verification });
+    const response = await h.run(request(valid, { headers: { "CF-Connecting-IP": "192.0.2.55" } }));
+    const publicBody = await response.text();
+    assert.equal(publicBody, JSON.stringify({ error: "verification_failed" }));
+    const captured = JSON.stringify(h.logs);
+    for (const value of sensitive) {
+      assert.equal(captured.includes(value), false);
+      assert.equal(publicBody.includes(value), false);
+    }
+    assert.equal(h.calls.length, 1);
+  }
+});
+
+test("logging is silent on success and logger failures cannot bypass CAPTCHA", async () => {
+  const success = await harness();
+  assert.equal((await success.run()).status, 200);
+  assert.deepEqual(success.logs, []);
+  const rejected = await harness({ verification: () => upstream({ success: false }), logger: () => { throw new Error("logger down"); } });
+  await expectError(await rejected.run(), "verification_failed", 400);
+  assert.equal(rejected.calls.length, 1);
 });

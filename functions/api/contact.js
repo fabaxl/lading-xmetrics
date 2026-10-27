@@ -1,5 +1,8 @@
 const HOSTS = new Set(["xmetrics.cl", "www.xmetrics.cl", "lading-xmetrics.pages.dev"]);
 const MAX_BODY_BYTES = 16 * 1024;
+const TURNSTILE_CODES = new Set(["missing-input-secret", "invalid-input-secret", "missing-input-response",
+  "invalid-input-response", "bad-request", "timeout-or-duplicate", "internal-error"]);
+const EXCEPTION_NAMES = new Set(["AbortError", "TimeoutError", "TypeError", "SyntaxError", "Error"]);
 const SINGLE_LINE = /^[^\u0000-\u001f\u007f]*$/u;
 const EMAIL = /^[^\s@<>(),;:"\\\[\]]+@[^\s@<>(),;:"\\\[\]]+\.[^\s@<>(),;:"\\\[\]]+$/u;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -76,7 +79,7 @@ async function fetchJSON(fetchImpl, url, options, timeoutMs) {
   try {
     return await Promise.race([
       (async () => {
-        const response = await fetchImpl(url, { ...options, signal: controller.signal, redirect: "error" });
+        const response = await fetchImpl(url, { ...options, signal: controller.signal, redirect: "manual" });
         const payload = await response.json().catch((error) => {
           if (error instanceof SyntaxError) return null;
           throw error;
@@ -85,8 +88,8 @@ async function fetchJSON(fetchImpl, url, options, timeoutMs) {
       })(),
       new Promise((_, reject) => {
         timer = setTimeout(() => {
+          reject(new DOMException("", "TimeoutError"));
           controller.abort();
-          reject(new Error("upstream timeout"));
         }, timeoutMs);
       }),
     ]);
@@ -95,7 +98,16 @@ async function fetchJSON(fetchImpl, url, options, timeoutMs) {
   }
 }
 
-export function createContactHandler({ fetchImpl = globalThis.fetch, timeoutMs = 8000 } = {}) {
+export function createContactHandler({ fetchImpl = globalThis.fetch, timeoutMs = 8000,
+  logger = (entry) => console.warn(JSON.stringify(entry)) } = {}) {
+  const diagnose = (reason, details = {}) => {
+    // Only callers' fixed reasons and explicitly allowlisted labels belong here, never request/provider data.
+    try { logger({ event: "contact_turnstile_rejected", reason, ...details }); } catch { /* Logging must not affect validation. */ }
+  };
+  const rejectChallenge = (reason, details) => {
+    diagnose(reason, details);
+    return json({ error: "verification_failed" }, 400);
+  };
   return async function handleContact({ request, env = {} }) {
     const fail = (error, status) => json({ error }, status);
     if (!["GET", "POST"].includes(request.method)) {
@@ -118,10 +130,22 @@ export function createContactHandler({ fetchImpl = globalThis.fetch, timeoutMs =
       const { ok, payload } = await fetchJSON(fetchImpl,
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
         { method: "POST", body: challenge }, timeoutMs);
-      if (!ok || payload?.success !== true || payload.hostname !== url.hostname || payload.action !== "contact") {
-        return fail("verification_failed", 400);
+      if (!ok) {
+        return rejectChallenge("upstream_rejected");
+      } else if (payload?.success !== true) {
+        const codes = Array.isArray(payload?.["error-codes"])
+          ? [...new Set(payload["error-codes"].filter((code) => TURNSTILE_CODES.has(code)))] : [];
+        return rejectChallenge("challenge_rejected", { codes });
+      } else if (payload.hostname !== url.hostname) {
+        return rejectChallenge("hostname_mismatch");
+      } else if (payload.action !== "contact") {
+        return rejectChallenge("action_mismatch");
       }
-    } catch { return fail("verification_failed", 400); }
+    } catch (error) {
+      return rejectChallenge("upstream_exception", {
+        exceptionName: EXCEPTION_NAMES.has(error?.name) ? error.name : "UnknownError",
+      });
+    }
 
     const message = {
       sender: { email: "contacto@xmetrics.cl", name: "xMetrics" },
