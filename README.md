@@ -42,9 +42,17 @@ npm test
 npm run build
 ```
 
-## Cloudflare Pages (preparado, aún sin DNS)
+## Publicación en Cloudflare Pages
 
-Conectar el repositorio `fabaxl/lading-xmetrics` mediante Git integration:
+La landing está publicada en [lading-xmetrics.pages.dev](https://lading-xmetrics.pages.dev/).
+Los dominios [www.xmetrics.cl](https://www.xmetrics.cl/) y
+[xmetrics.cl](https://xmetrics.cl/) están asociados al proyecto desde el
+27 de octubre de 2026. Durante la propagación, algunas conexiones pueden seguir
+mostrando temporalmente el sitio anterior.
+
+El proyecto `lading-xmetrics` está conectado a `fabaxl/lading-xmetrics` mediante
+Git integration. Cada cambio en `main` genera una nueva publicación:
+
 
 | Opción                 | Valor                                    |
 | ---------------------- | ---------------------------------------- |
@@ -63,17 +71,23 @@ rechaza enlaces simbólicos. No publica tests, configuración ni metadatos Git.
 `/` funcionan incluso cuando falta una URL anidada. La página principal mantiene
 assets relativos para conservar la compatibilidad con GitHub Pages.
 
-**DNS y dominio personalizado aún no están configurados por este cambio.**
-Primero validar la URL de Pages y luego asociar el dominio desde Cloudflare.
-No se incluyen redirecciones de dominio; conservar los registros de correo y
-coordinar el cambio de nameservers en NIC Chile con el usuario.
+Los dominios se asociaron desde **Pages → Dominios personalizados** y sus
+registros web apuntan a `lading-xmetrics.pages.dev` mediante Cloudflare. No se
+configuraron redirecciones entre apex y www. Los registros de correo heredados
+no se modificaron: todavía no representan un servicio de correo habilitado.
+El contacto comercial permanece como **Próximamente** hasta configurar un
+proveedor de correo del dominio.
+
+Para comprobar una publicación: verificar HTTPS, la portada, los recursos
+CSS/JS y una ruta inexistente (debe devolver el 404 de xMetrics). El build no
+publica README, pruebas ni otros archivos internos.
 
 Referencias: [HTML estático](https://developers.cloudflare.com/pages/framework-guides/deploy-anything/)
 y [páginas 404](https://developers.cloudflare.com/pages/configuration/serving-pages/).
 
 ## Publicación alternativa
 
-Sitio estático compatible con GitHub Pages y Vercel. Para GitHub Pages, servir la raíz de la rama principal; `.nojekyll` evita procesamiento Jekyll. Los assets usan rutas relativas para funcionar bajo `/lading-xmetrics/`.
+Sitio estático compatible con GitHub Pages y Vercel. Para GitHub Pages, servir la raíz de la rama principal; `.nojekyll` evita procesamiento Jekyll. Los assets de la portada usan rutas relativas para funcionar bajo `/lading-xmetrics/`. El 404 personalizado está diseñado para la raíz de Cloudflare Pages; sus rutas absolutas no están adaptadas a esa subruta de GitHub Pages.
 
 Para Vercel, importar este repositorio con preset Other, sin comando de build y con directorio de salida `.`. Se incluye `vercel.json`.
 
