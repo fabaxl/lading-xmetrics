@@ -3,3 +3,11 @@ node_modules/
 .qa/
 .DS_Store
 dist/
+
+# Provider credentials remain local or in Cloudflare secrets.
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.wrangler/

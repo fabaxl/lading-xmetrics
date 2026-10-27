@@ -355,8 +355,8 @@ test("institutional methodology and OIRS clearly distinguish the static demo", (
     );
   }
   assert.match(visibleText, /enfoque institucional de xMetrics/);
-  assert.match(visibleText, /esta landing no recibe solicitudes/);
-  assert.equal(tags.filter((tag) => tag.name === "form").length, 0);
+  assert.match(visibleText, /no recibe solicitudes OIRS/i);
+  assert.equal(tags.filter((tag) => tag.name === "form").length, 1);
 });
 
 test("demo and methodology links work without advertising inactive contact channels", () => {
@@ -369,12 +369,12 @@ test("demo and methodology links work without advertising inactive contact chann
   }
   assert.ok(byId.has("contact"), "Legacy contact anchor must still resolve");
   assert.match(visibleText, /Explorar demostración interactiva/);
-  assert.match(visibleText, /CONTACTO COMERCIAL Próximamente/);
+  assert.match(visibleText, /ventas@xmetrics\.cl/);
   assert.ok(
     !links.some((tag) => /^(?:mailto:|tel:|https?:\/\/wa\.me\/)/i.test(tag.attrs.href)),
     "Do not advertise contact channels before they are configured",
   );
-  assert.doesNotMatch(visibleText, /(?:demo|ventas)@xmetrics\.cl/);
+  assert.doesNotMatch(visibleText, /bjrmetrics@gmail\.com/);
   assert.ok(
     !links.some((tag) =>
       /^https:\/\/(www\.)?xmetrics\.cl\//.test(tag.attrs.href),

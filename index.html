@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="./static/css/landing.css" />
     <script defer src="./static/js/landing.js"></script>
     <script defer src="./static/js/landing-orbit.js"></script>
+    <script defer src="./static/js/landing-contact.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -85,7 +86,7 @@
           ><a href="#contactabilidad">Contactabilidad</a
           ><a href="#inteligencia"
             >Visión IA <span class="nav-new">NUEVO</span></a
-          >
+          ><a href="#contact">Contacto</a>
         </nav>
         <div class="nav-actions">
           <button class="login-link nav-tour" type="button" data-tour-open>
@@ -116,6 +117,7 @@
         <a href="#inteligencia">Visión IA</a>
         <a href="#experiencia">Experiencia y OIRS</a>
         <a href="#metodologia">Metodología</a>
+        <a href="#contact">Contacto</a>
         <a href="#explorar">Explorar demo ↗</a>
       </nav>
     </header>
@@ -595,7 +597,7 @@
             </ul>
             <p class="oirs-scope">
               Parte del enfoque institucional de xMetrics. Consulta su alcance
-              en una demostración; esta landing no recibe solicitudes.
+              en una demostración. El formulario comercial no recibe solicitudes OIRS.
             </p>
             <a class="institutional-link" href="#metodologia"
               >Conoce nuestra metodología <span aria-hidden="true">↓</span></a
@@ -801,24 +803,58 @@
         </div>
       </section>
 
-      <section id="contact" class="closing-section container reveal">
+      <section id="contact" class="closing-section contact-closing container reveal" aria-labelledby="contact-title">
         <div class="closing-orbit" aria-hidden="true"></div>
         <span class="eyebrow">EL CAMBIO EMPIEZA ESCUCHANDO</span>
-        <h2>Detrás de cada dato,<br /><span>hay una persona.</span></h2>
-        <p>Dale a su experiencia un lugar en tus decisiones.</p>
-        <a class="button button-mint" href="#explorar"
-          >Explorar demostración interactiva
-          <svg aria-hidden="true"><use href="#i-arrow" /></svg></a
-        >
-        <span class="closing-note"
-          >Conoce la experiencia de xMetrics en esta demostración.</span
-        >
-        <div class="contact-options" role="group" aria-label="Contacto comercial">
-          <div class="contact-option">
-            <span>CONTACTO COMERCIAL</span>
-            Próximamente
+        <h2 id="contact-title">Conversemos sobre<br /><span>tu próxima mejora.</span></h2>
+        <p>Cuéntanos qué necesita tu equipo. Te ayudamos a explorar xMetrics.</p>
+        <form id="contact-form" class="contact-form" action="./api/contact" method="post" aria-describedby="contact-privacy contact-status">
+          <div class="contact-form-heading">
+            <span class="eyebrow">CONTACTO COMERCIAL</span>
+            <p>Tu consulta será dirigida a <strong>ventas@xmetrics.cl</strong>.</p>
           </div>
-        </div>
+          <fieldset id="contact-fields" disabled>
+            <legend class="sr-only">Datos de contacto y consulta</legend>
+            <div class="contact-fields-grid">
+              <div class="contact-field">
+                <label for="contact-name">Nombre <span>(obligatorio)</span></label>
+                <input id="contact-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="100" required />
+              </div>
+              <div class="contact-field">
+                <label for="contact-email">Correo electrónico <span>(obligatorio)</span></label>
+                <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required />
+              </div>
+              <div class="contact-field contact-field-wide">
+                <label for="contact-organization">Organización <span>(opcional)</span></label>
+                <input id="contact-organization" name="organization" type="text" autocomplete="organization" maxlength="160" />
+              </div>
+              <div class="contact-field contact-field-wide">
+                <label for="contact-message">¿En qué podemos ayudarte? <span>(obligatorio)</span></label>
+                <textarea id="contact-message" name="message" rows="5" minlength="10" maxlength="3000" required aria-describedby="contact-sensitive"></textarea>
+                <p id="contact-sensitive" class="contact-field-hint">No incluyas datos de pacientes ni información clínica. Este formulario es sólo para consultas comerciales.</p>
+              </div>
+            </div>
+            <div hidden aria-hidden="true">
+              <input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            </div>
+            <label class="contact-consent" for="contact-consent">
+              <input id="contact-consent" name="consent" type="checkbox" required />
+              <span>Autorizo el uso de mis datos para responder esta consulta. No me suscribo a campañas ni a envíos publicitarios.</span>
+            </label>
+            <p id="contact-privacy" class="contact-privacy">Usaremos tu nombre, correo, organización y mensaje para gestionar tu solicitud. Cloudflare Turnstile nos ayuda a prevenir envíos automatizados.</p>
+            <div id="contact-turnstile" class="contact-turnstile" aria-label="Verificación de seguridad de Cloudflare"></div>
+            <div class="contact-submit-row">
+              <button id="contact-submit" class="button button-mint" type="submit" disabled>
+                Enviar consulta <svg aria-hidden="true"><use href="#i-arrow" /></svg>
+              </button>
+              <span>Un contacto con propósito.<br />Sin suscripciones automáticas.</span>
+            </div>
+          </fieldset>
+          <p id="contact-status" class="contact-status" role="status" aria-live="polite" aria-atomic="true">Estamos habilitando el formulario. Inténtalo más tarde.</p>
+          <noscript><p class="contact-noscript">Para usar este formulario necesitas activar JavaScript y completar la verificación de seguridad.</p></noscript>
+        </form>
+        <a class="contact-demo-link" href="#explorar">Explorar demostración interactiva <span aria-hidden="true">↗</span></a>
+        <span class="closing-note">Puedes seguir explorando la demo con datos ficticios.</span>
       </section>
     </main>
 
@@ -842,7 +878,8 @@
       <div class="footer-links">
         <a href="#plataforma">Plataforma</a
         ><a href="#contactabilidad">Contactabilidad</a
-        ><a href="#metodologia">Metodología</a>
+        ><a href="#metodologia">Metodología</a
+        ><a href="#contact">Contacto</a>
       </div>
       <span>Diseñado para cuidar mejor.<br />© 2026 xMetrics</span>
     </footer>

@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 // Publish only site files, never repository metadata or local configuration.
-const publicEntries = ["index.html", "404.html", "static"];
+const publicEntries = ["index.html", "404.html", "static", "_routes.json"];
 
 function build(root = path.resolve(__dirname, "..")) {
   const output = path.join(root, "dist");

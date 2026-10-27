@@ -14,7 +14,7 @@ const { build } = require(path.join(root, "scripts/build.cjs"));
 function fixture(t) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "xmetrics-build-"));
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
-  for (const entry of ["index.html", "404.html", "static"]) {
+  for (const entry of ["index.html", "404.html", "static", "_routes.json"]) {
     fs.cpSync(path.join(root, entry), path.join(directory, entry), {
       recursive: true,
     });
@@ -36,7 +36,7 @@ function files(directory, prefix = "") {
 
 test("build publishes only whitelisted files and clears stale output", (t) => {
   const source = fixture(t);
-  for (const filename of [".env", "README.md", "package.json", "vercel.json"]) {
+  for (const filename of [".env", ".dev.vars", "README.md", "package.json", "vercel.json"]) {
     fs.writeFileSync(path.join(source, filename), "must stay private");
   }
   fs.writeFileSync(path.join(source, "static/.env"), "must stay private");
@@ -45,6 +45,7 @@ test("build publishes only whitelisted files and clears stale output", (t) => {
   const expected = [
     "404.html",
     "index.html",
+    "_routes.json",
     ...files(path.join(root, "static"), "static"),
   ].sort();
   const output = build(source);
@@ -77,8 +78,14 @@ test("404 is branded, script-free and resolves links from nested paths", () => {
   assert.match(html, /href="\/static\/css\/landing\.css"/);
   assert.match(html, /href="\/">Volver al inicio/);
   assert.doesNotMatch(html, /<script|http-equiv="refresh"|mailto:/i);
-  assert.match(html, /Contacto comercial: próximamente\./);
+  assert.match(html, /Consulta la información de contacto en el inicio\./);
   for (const [, reference] of html.matchAll(/href="([^"]+)"/g)) {
     assert.ok(reference.startsWith("/"));
   }
+});
+
+
+test("Pages runs server code only for the contact endpoint", () => {
+  const routes = JSON.parse(fs.readFileSync(path.join(root, "_routes.json"), "utf8"));
+  assert.deepEqual(routes, {version: 1, include: ["/api/contact", "/api/contact/"], exclude: []});
 });
