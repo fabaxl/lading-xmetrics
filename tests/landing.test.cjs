@@ -359,19 +359,28 @@ test("institutional methodology and OIRS clearly distinguish the static demo", (
   assert.equal(tags.filter((tag) => tag.name === "form").length, 0);
 });
 
-test("official demonstration, source and email contacts have explicit destinations", () => {
+test("demo and methodology links work without advertising inactive contact channels", () => {
   const links = tags.filter((tag) => tag.name === "a");
-  for (const destination of [
-    "https://www.xmetrics.cl/",
-    "https://www.xmetrics.cl/#contact",
-    "mailto:demo@xmetrics.cl",
-    "mailto:ventas@xmetrics.cl",
-  ]) {
+  for (const destination of ["#metodologia", "#explorar"]) {
     assert.ok(
       links.some((tag) => tag.attrs.href === destination),
       `Missing link: ${destination}`,
     );
   }
+  assert.ok(byId.has("contact"), "Legacy contact anchor must still resolve");
+  assert.match(visibleText, /Explorar demostración interactiva/);
+  assert.match(visibleText, /CONTACTO COMERCIAL Próximamente/);
+  assert.ok(
+    !links.some((tag) => /^(?:mailto:|tel:|https?:\/\/wa\.me\/)/i.test(tag.attrs.href)),
+    "Do not advertise contact channels before they are configured",
+  );
+  assert.doesNotMatch(visibleText, /(?:demo|ventas)@xmetrics\.cl/);
+  assert.ok(
+    !links.some((tag) =>
+      /^https:\/\/(www\.)?xmetrics\.cl\//.test(tag.attrs.href),
+    ),
+    "Do not link to the institutional page being replaced",
+  );
   for (const tag of links.filter((tag) => tag.attrs.target === "_blank")) {
     const rel = (tag.attrs.rel || "").split(/\s+/);
     assert.ok(rel.includes("noopener") && rel.includes("noreferrer"));

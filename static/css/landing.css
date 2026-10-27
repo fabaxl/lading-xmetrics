@@ -3749,20 +3749,17 @@ body {
   padding-top: 26px;
   text-align: left;
 }
-.contact-options a {
+.contact-options .contact-option {
   min-width: 0;
   font-size: 17px;
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
-.contact-options a > span:first-child {
+.contact-options .contact-option > span:first-child {
   display: block;
   color: var(--muted);
   font-size: 13px;
   letter-spacing: 1px;
-}
-.contact-options a:hover {
-  color: var(--mint);
 }
 @media (max-width: 900px) {
   .experience-grid {
@@ -3785,4 +3782,35 @@ body {
   .contact-options {
     flex-direction: column;
   }
+}
+
+/* The standalone 404 has no scripts and stays readable at nested URLs. */
+.error-body::before {
+  height: 100%;
+}
+.error-page {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding-block: 64px;
+  text-align: center;
+}
+.error-page .brand-word {
+  font-size: 32px;
+}
+.error-page h1 {
+  font-size: clamp(28px, 5vw, 56px);
+  line-height: 1.15;
+  margin: 0;
+}
+.error-page p {
+  max-width: 44ch;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--muted);
 }
