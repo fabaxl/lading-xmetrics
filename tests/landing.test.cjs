@@ -150,7 +150,6 @@ test("fragment links, SVG symbols and accessibility references resolve", () => {
 for (const topic of [
   "NPS",
   "Business Intelligence",
-  "IA",
   "WhatsApp",
   "correo electrónico",
   "contactabilidad",
@@ -162,15 +161,12 @@ for (const topic of [
   });
 }
 
-test("AI and sample metrics are clearly identified as conceptual, not live features", () => {
-  assert.match(
-    visibleText,
-    /La IA, el análisis de sentimiento y la predicción no están disponibles en la versión actual\./,
-  );
-  assert.match(
-    visibleText,
-    /demostración conceptual con respuestas predefinidas/,
-  );
+test("unavailable AI capabilities are absent from the public landing", () => {
+  assert.doesNotMatch(visibleText, /\bIA\b|inteligencia artificial|análisis de sentimiento|predicción/i);
+  assert.ok(!byId.has("inteligencia"));
+});
+
+test("sample metrics remain clearly identified as illustrative", () => {
   assert.match(visibleText, /no son datos reales/);
   assert.match(visibleText, /datos ficticios/i);
 });

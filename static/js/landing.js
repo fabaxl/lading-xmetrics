@@ -228,38 +228,4 @@
     );
   if (document.getElementById("bi-nps")) selectArea("all");
 
-  const prompts = {
-    focus: {
-      question: "¿Dónde podríamos enfocar la mejora?",
-      title: "Una nueva forma de explorar.",
-      answer:
-        "En este ejemplo, los comentarios sobre espera podrían ser una señal para revisar procesos. El siguiente paso sería contrastarlos con la muestra y el contexto de cada área.",
-    },
-    voice: {
-      question: "¿Qué podríamos aprender de los comentarios?",
-      title: "Escuchar también los matices.",
-      answer:
-        "Imagina agrupar comentarios sobre trato, información y tiempos de espera. Esta visión busca facilitar la lectura, conservando el contexto y la revisión de tu equipo. No hay análisis automático activo en esta demo.",
-    },
-    context: {
-      question: "¿Cómo conectar una señal con su contexto?",
-      title: "Una señal no explica todo.",
-      answer:
-        "Antes de sacar conclusiones, sería importante revisar el período, el área y el número de respuestas. Una asociación no demuestra una causa: la interpretación y las decisiones siguen en manos de las personas.",
-    },
-  };
-  document.querySelectorAll("[data-prompt]").forEach((button) =>
-    button.addEventListener("click", () => {
-      const prompt = prompts[button.dataset.prompt];
-      if (!prompt) return;
-      document.querySelectorAll("[data-prompt]").forEach((item) => {
-        const active = item === button;
-        item.classList.toggle("is-active", active);
-        item.setAttribute("aria-pressed", String(active));
-      });
-      document.getElementById("ai-question").textContent = prompt.question;
-      document.querySelector("#ai-answer strong").textContent = prompt.title;
-      document.querySelector("#ai-answer p").textContent = prompt.answer;
-    }),
-  );
 })();

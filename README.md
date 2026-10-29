@@ -1,6 +1,6 @@
 # xMetrics — Cada experiencia cuenta.
 
-Landing personal e independiente del sistema xMetrics, con contenido estático y un formulario comercial en Cloudflare Pages Functions. Presenta NPS, Business Intelligence, contactabilidad por WhatsApp y correo electrónico, y una visión conceptual de IA.
+Landing personal e independiente del sistema xMetrics, con contenido estático y un formulario comercial en Cloudflare Pages Functions. Presenta NPS, Business Intelligence, contactabilidad por WhatsApp y correo electrónico.
 
 ## Ver en local
 
@@ -20,11 +20,11 @@ Abre http://127.0.0.1:8765. Requiere Python 3; el contenido no necesita instalac
 - Metodología de captura, segmentación y acción, dimensiones de experiencia y OIRS institucional.
 - Formulario comercial a `ventas@xmetrics.cl`, protegido con Turnstile y validación en servidor; deshabilitado hasta configurar y activar el servicio.
 
-**Todo dato es ilustrativo.** La IA está en exploración: las respuestas son predefinidas, no hay inferencia ni análisis real. Las demos no envían mensajes ni recogen datos de pacientes. El formulario comercial, cuando está habilitado, envía sólo la consulta del visitante; advierte que no se incluya información clínica ni datos de pacientes. El control antispam no garantiza entrega ni reemplaza la gestión de consentimiento.
+**Todo dato es ilustrativo.** Las demos no envían mensajes ni recogen datos de pacientes. El formulario comercial, cuando está habilitado, envía sólo la consulta del visitante; advierte que no se incluya información clínica ni datos de pacientes. El control antispam no garantiza entrega ni reemplaza la gestión de consentimiento.
 
 ## Fuente institucional
 
-El contenido se complementó con [xmetrics.cl](https://www.xmetrics.cl/) (consulta: 26 de octubre de 2026). Se adaptó su enfoque sin reproducir porcentajes promocionales como resultados verificados. La OIRS se presenta como alcance institucional sujeto a demostración; esta landing no recibe ni gestiona solicitudes OIRS. El formulario se reserva para contacto comercial. La recepción y el envío de correo deben verificarse antes de activarlo; no se presenta un éxito ficticio cuando faltan credenciales. WhatsApp se describe como capacidad del producto, no como canal comercial activo. La IA conceptual y los controles de contactabilidad se mantienen separados de las afirmaciones de esa fuente.
+El contenido se complementó con [xmetrics.cl](https://www.xmetrics.cl/) (consulta: 26 de octubre de 2026). Se adaptó su enfoque sin reproducir porcentajes promocionales como resultados verificados. La OIRS se presenta como alcance institucional sujeto a demostración; esta landing no recibe ni gestiona solicitudes OIRS. El formulario se reserva para contacto comercial. La recepción y el envío de correo deben verificarse antes de activarlo; no se presenta un éxito ficticio cuando faltan credenciales. WhatsApp se describe como capacidad del producto, no como canal comercial activo. Los controles de contactabilidad se mantienen separados de las afirmaciones de esa fuente.
 
 ## Archivos
 
