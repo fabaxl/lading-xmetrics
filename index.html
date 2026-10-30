@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="./static/css/landing.css" />
     <script defer src="./static/js/landing.js"></script>
     <script defer src="./static/js/landing-orbit.js"></script>
+    <script defer src="./static/js/landing-video.js"></script>
     <script defer src="./static/js/landing-contact.js"></script>
   </head>
   <body>
@@ -820,49 +821,14 @@
       >
         ×</button
       ><span class="eyebrow">CONOCE XMETRICS</span>
-      <h2 id="tour-title">De una respuesta<br />a una mejor experiencia.</h2>
-      <p class="tour-intro">
-        Un recorrido por las capacidades actuales de la plataforma.
-      </p>
-      <ol class="tour-steps">
-        <li>
-          <span>01</span>
-          <div>
-            <h3>Invita sin saturar</h3>
-            <p>
-              Contacta por WhatsApp o correo electrónico con límites e
-              intervalos entre envíos.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span>02</span>
-          <div>
-            <h3>Escucha y comprende</h3>
-            <p>
-              Recoge respuestas NPS y revisa resultados por área, junto con su
-              muestra.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span>03</span>
-          <div>
-            <h3>Haz seguimiento</h3>
-            <p>
-              Gestiona casos detractores y registra acciones de mejora con
-              responsables y metas.
-            </p>
-          </div>
-        </li>
-      </ol>
-      <a class="button button-mint" href="#explorar" data-tour-close
-        >Probar la demo <svg><use href="#i-arrow" /></svg
-      ></a>
-      <p class="tour-note">
-        Demo local con datos ficticios. No envía mensajes ni procesa información
-        de pacientes.
-      </p>
+      <h2 id="tour-title">Así funciona xMetrics</h2>
+      <p class="tour-intro">De la voz del paciente a las acciones de mejora.</p>
+      <div class="tour-video-frame" data-video-format="landscape">
+        <video id="tour-video" controls playsinline preload="none" aria-label="Cómo funciona xMetrics">
+          Tu navegador no permite reproducir este video.
+        </video>
+      </div>
+      <p class="tour-note">Recorrido de 24 segundos con datos ilustrativos. Usa los controles para reproducir, pausar o activar el sonido.</p>
     </dialog>
   </body>
 </html>

@@ -4001,3 +4001,27 @@ body {
     width: 100%;
   }
 }
+
+/* One adaptive player: the frame never crops the content of a video. */
+#tour-dialog {
+  --video-ratio: 1.7777778;
+  box-sizing: border-box;
+  width: min(1100px, calc(100vw - 32px), calc((100dvh - 178px) * var(--video-ratio) + 32px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  padding: 24px 16px 16px;
+  overflow: auto;
+}
+#tour-dialog[data-video-format="portrait"] { --video-ratio: 0.5625; }
+#tour-dialog[data-video-format="square"] { --video-ratio: 1; }
+#tour-dialog h2 { font-size: clamp(20px, 2.4vw, 30px); margin: 0 32px 6px 0; }
+#tour-dialog .tour-intro { font-size: 14px; line-height: 1.45; margin: 0 0 12px; }
+#tour-dialog .tour-note { font-size: 13px; line-height: 1.45; margin: 10px 0 0; }
+.tour-video-frame { aspect-ratio: var(--video-ratio); border-radius: 10px; overflow: hidden; background: #06111c; }
+#tour-video { display: block; width: 100%; height: 100%; object-fit: contain; }
+#tour-dialog .dialog-close { top: 10px; right: 10px; z-index: 1; }
+@media (max-height: 500px) {
+  #tour-dialog { width: min(1100px, calc(100vw - 24px), calc((100dvh - 112px) * var(--video-ratio) + 24px)); padding: 16px 12px 12px; }
+  #tour-dialog h2 { font-size: 20px; margin-bottom: 8px; }
+  #tour-dialog .tour-intro, #tour-dialog .tour-note { display: none; }
+}

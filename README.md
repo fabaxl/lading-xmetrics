@@ -145,3 +145,27 @@ El contenido estático es compatible con GitHub Pages y Vercel; el formulario no
 Para Vercel, importar este repositorio con preset Other, sin comando de build y con directorio de salida `.`. Se incluye `vercel.json`.
 
 La landing no copia configuración, credenciales, backend ni bases de datos del sistema original.
+
+## Video adaptable del recorrido (vista previa local)
+
+Los botones «Cómo funciona» y «Ver cómo funciona» abren un único reproductor.
+`landing-video.js` elige una variante según la relación ancho/alto del viewport:
+vertical por debajo de 0,7; cuadrada por debajo de 1,4; horizontal en el resto.
+No asigna ninguna URL de video hasta abrir el diálogo. Al cerrar, pausa y libera
+el archivo; al girar la pantalla, conserva la posición y el estado de reproducción.
+No tiene autoplay y mantiene controles nativos y reproducción dentro de la página.
+
+| Variante | Resolución | Original | Optimizado |
+| --- | --- | ---: | ---: |
+| Vertical | 720 × 1280 | 2.660 MB | 1.326 MB |
+| Cuadrada | 720 × 720 | 1.828 MB | 0.860 MB |
+| Horizontal | 1280 × 720 | 2.357 MB | 1.150 MB |
+
+Tamaños en MB decimales; duración conservada de unos 24,27 segundos.
+MP4 H.264/OpenH264, píxeles yuv420p, AAC estéreo a 64 kb/s y `faststart`.
+Se conservan los originales fuera del repositorio. Portadas JPEG extraídas a los
+5 segundos para mostrar contenido antes de reproducir. Las cifras ilustrativas
+del video no son resultados reales de clientes.
+
+Esta incorporación debe aprobarse visualmente antes de subir la rama a GitHub
+o desplegar el sitio. Las pruebas de selección y carga están en `tests/video.test.cjs`.

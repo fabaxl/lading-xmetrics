@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "python3 -m http.server 8765 --bind 127.0.0.1",
     "test": "node --test tests/*.test.cjs",
-    "check": "node --check static/js/landing.js && node --check static/js/landing-orbit.js && node --check static/js/landing-contact.js && node --check scripts/build.cjs && node --check functions/api/contact.js",
+    "check": "node --check static/js/landing.js && node --check static/js/landing-orbit.js && node --check static/js/landing-video.js && node --check static/js/landing-contact.js && node --check scripts/build.cjs && node --check functions/api/contact.js",
     "build": "node scripts/build.cjs"
   }
 }
