@@ -336,7 +336,7 @@ test("typography keeps compact labels at least 13px at every breakpoint", () => 
 test("institutional methodology and OIRS clearly distinguish the static demo", () => {
   assert.ok(byId.has("metodologia"));
   assert.ok(byId.has("experiencia"));
-  assert.match(visibleText, /Captura\. Segmenta\. Actúa\./);
+  assert.match(visibleText, /Cómo funciona, de la invitación al seguimiento\./);
   assert.match(visibleText, /OIRS virtual/);
   for (const topic of [
     "Reclamos",
